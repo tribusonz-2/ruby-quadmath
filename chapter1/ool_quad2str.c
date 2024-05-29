@@ -11,7 +11,7 @@
 static inline int
 index_of_point(char *str)
 {
-	for (volatile int i = 0; i < strlen(str); i++)
+	for (volatile int i = 0; i < (int)strlen(str); i++)
 	{
 		if (str[i] == '.')  return i;
 	}
@@ -132,6 +132,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 		}
 		else if (absx == 0)
 		{
+			if (retval == 'g')  retval = 'f';
 			expv = 0;
 			s[0] = '0'; s[1] = '.'; s[2] = '0';
 			*buf = s;
