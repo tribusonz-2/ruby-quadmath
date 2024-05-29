@@ -134,7 +134,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 		{
 			if (retval == 'g')  retval = 'f';
 			expv = 0;
-			s[0] = '0'; s[1] = '.'; s[2] = '0';
+			s[0] = '0'; s[1] = '.'; s[2] = '0'; s[3] = 0;
 			*buf = s;
 		}
 		else if (absx >= 10)
@@ -441,11 +441,11 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 			}
 			switch (retval) {
 			case 'b': /* radix == 2  */
-				s[0] = '0'; s[1] = '.'; s[2] = '1';
+				s[0] = '0'; s[1] = '.'; s[2] = '1'; s[3] = 0;
 				expv = 1; 
 				break;
 			case 'e': case 'f': /* radix == 10 */
-				s[0] = '1'; s[1] = '.'; s[2] = '0';
+				s[0] = '1'; s[1] = '.'; s[2] = '0'; s[3] = 0;
 				expv = 0;
 				break;
 			default:
