@@ -76,7 +76,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 	{
 		signv = 0;
 		expv = 0;
-		s[0] = 'N'; s[1] = 'a'; s[2] = 'N';
+		s[0] = 'N'; s[1] = 'a'; s[2] = 'N'; s[3] = 0;
 		*buf = s;
 		retval = '1';
 	}
@@ -92,7 +92,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 			expv = 0;
 			s[0] = 'I'; s[1] = 'n'; s[2] = 'f';
 			s[3] = 'i'; s[4] = 'n'; s[5] = 'i';
-			s[6] = 't'; s[7] = 'y';
+			s[6] = 't'; s[7] = 'y'; s[8] = 0;
 			*buf = s;
 			retval = '1';
 		}
