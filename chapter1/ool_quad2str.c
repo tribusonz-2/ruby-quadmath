@@ -146,14 +146,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 				expv += 1;
 				break;
 			case 'g':
-				if ((expv + 1) > FLT128_DIG)
-				{
-					retval = 'e';
-				}
-				else
-				{
-					retval = 'f';
-				}
+				retval = ((expv + 1) > FLT128_DIG) ? 'e' : 'f';
 				break;
 			default:
 				break;
@@ -298,23 +291,21 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 				}
 				else
 				{
-					const int fra_pos = offset + intdigit + 1;
+					const int fra_pos = intdigit + 1;
 					int s_fra_size = strlen(s+offset) - intdigit - 1;
-// FIXME: 改善する
-// $ ./ool_quad2str f 13.00111111111111111111111111111111 #=> 13.
 					if (s_fra_size < fradigit)
 					{
 						for (; s_fra_size < fradigit; s_fra_size++)
 						{
-							s[fra_pos+s_fra_size] = '0';
+							s[offset+fra_pos+s_fra_size] = '0';
 						}
 					}
-					if (s[fra_pos+fradigit] == '9')
+					if (s[offset+fra_pos+fradigit] == '9')
 					{
-						s[fra_pos+fradigit] = 0;
+						s[offset+fra_pos+fradigit] = 0;
 						for (int i = 0; i < fradigit; i++)
 						{
-							char *ptr = (s + fra_pos + fradigit - i - 1);
+							char *ptr = (s + offset + fra_pos + fradigit - i - 1);
 							if (*ptr == '9')
 								*ptr = 0;
 							else
@@ -323,9 +314,9 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 								break;
 							}
 						}
-						if (s[fra_pos] == 0)
+						if (s[offset+fra_pos] == 0)
 						{
-							s[fra_pos] = '0'; s[fra_pos+1] = 0; 
+							s[offset+fra_pos] = '0'; s[offset+fra_pos+1] = 0; 
 							for (int i = 0; i < intdigit; i++)
 							{
 								char *ptr = (s + offset + intdigit - i - 1);
@@ -346,16 +337,16 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 					}
 					else
 					{
-						s[fra_pos+fradigit] = 0;
-						if (s[fra_pos+fradigit-1] == '0')
+						s[offset+fra_pos+fradigit] = 0;
+						if (s[offset+fra_pos+fradigit-1] == '0')
 						{
 							for (int i = 0; i < (fradigit - 1); i++)
 							{
-								char *ptr = (s + fra_pos + fradigit - i - 2);
+								char *ptr = (s + offset + fra_pos + fradigit - i - 1);
 								if (*ptr == '0')  *ptr = 0;
 								else  break;
 							}
-							if (s[fra_pos] == 0)  { s[fra_pos] = '0'; s[fra_pos+1] = 0; }
+							if (s[offset+fra_pos] == 0)  { s[offset+fra_pos] = '0'; s[offset+fra_pos+1] = 0; }
 						}
 					}
 				}
