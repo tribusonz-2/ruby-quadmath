@@ -356,7 +356,7 @@ InitVM_Float128(void)
 	
 	/* Constants */
 	rb_define_const(rb_cFloat128, "NAN", rb_float128_cf128(nanq(NULL)));
-	rb_define_const(rb_cFloat128, "INFINITY", rb_float128_cf128(strtoflt128("inf", NULL)));
+	rb_define_const(rb_cFloat128, "INFINITY", rb_float128_cf128(HUGE_VALQ));
 	
 	rb_define_const(rb_cFloat128, "MAX", rb_float128_cf128(FLT128_MAX));
 	rb_define_const(rb_cFloat128, "MIN", rb_float128_cf128(FLT128_MIN));
