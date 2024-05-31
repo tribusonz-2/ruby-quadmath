@@ -121,9 +121,9 @@ float128_inspect(VALUE self)
  *  +self+を文字列へ変換する．基数+base+ (2, 10, 16) を設定すると進数が変わる．
  *  
  *    Float128('10.0').to_s #=> "10.0"
- *    Float128('1e34').to_s(10) #=> "100000000000000000000000000000000.0"
+ *    Float128('1e3').to_s(10) #=> "1.0e+3"
  *    Float128('0.1').to_s(2) #=> "0.1e+0"
- *    Float128('0.0000001').to_s(10) #=> "0.0000001"
+ *    Float128('0.001').to_s(10) #=> "1.0e-3"
  *    Float128::MAX.to_s(16) #=> "0x1.ffffffffffffffffffffffffffffp+16383"
  *    Float128::INFINITY.to_s(2) #=> "Infinity" # 非数・無限は基数に関係なく文字列変換する
  *  
