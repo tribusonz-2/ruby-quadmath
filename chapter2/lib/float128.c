@@ -51,7 +51,7 @@ rb_float128_cf128(const __float128 x)
 
 /*
  *  call-seq:
- *    -self -> Complex128
+ *    -self -> Float128
  *  
  *  単項マイナス．+self+をマイナスにして返す．
  */

@@ -48,6 +48,7 @@ complex128_cc128(__complex128 x)
 	VALUE obj = complex128_allocate(x);
 	return obj;
 }
+
 /*
  *  call-seq:
  *    -self -> Complex128
