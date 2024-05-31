@@ -332,8 +332,8 @@ InitVM_Float128(void)
 	
 //	rb_define_method(rb_cFloat, "to_f128", float_to_f128, 0);
 	
-    /* Global function */
-//    rb_define_global_function("Float128", f_Float128, -1);
+	/* Global function */
+//	rb_define_global_function("Float128", f_Float128, -1);
 	
 	/* Class methods */
 	rb_undef_alloc_func(rb_cFloat128);
