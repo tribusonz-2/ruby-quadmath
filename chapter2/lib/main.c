@@ -4,6 +4,7 @@
     Author: Hironobu Inatsuka
 *******************************************************************************/
 #include <ruby.h>
+#include <quadmath.h>
 #define USE_GLOBAL_VARIABLE
 #include "abi.h"
 #include "missing/ool_quad2str.c"

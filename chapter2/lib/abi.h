@@ -25,9 +25,6 @@ RUBY_EXT_EXTERN VALUE rb_cFloat128;
 RUBY_EXT_EXTERN VALUE rb_cComplex128;
 RUBY_EXT_EXTERN VALUE rb_mQuadMath;
 
-
-#include <quadmath.h> // quadmathのプリミティブ型を使うのに，ここでヘッダをインクルードさせるとなぜかwarningが出ない．最適化？
-
 /*
  * C API: rb_float128_cf128(x)
  * 
