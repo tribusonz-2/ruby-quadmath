@@ -58,3 +58,10 @@ rb_cFloat128 = rb_define_class("Float128", rb_cNumeric);
 rb_undef_alloc_func(rb_cFloat128);
 rb_undef_method(CLASS_OF(rb_cFloat128), "new");
 ```
+
+　振る舞いとしてはアロケータによって内部か外部かが決まる。
+
+```
+ミュータブル -> アロケーションは内部
+イミュータブル -> アロケーションは外部
+```
