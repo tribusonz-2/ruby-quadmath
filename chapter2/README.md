@@ -59,9 +59,38 @@ rb_undef_alloc_func(rb_cFloat128);
 rb_undef_method(CLASS_OF(rb_cFloat128), "new");
 ```
 
-　振る舞いとしてはアロケータによって内部か外部かが決まる。
+　振る舞いとしてはアロケータによって内部か外部かが決まる．設計は計算結果をオブジェクトにするなど，兼ねて考慮するべきだろう．
 
 ```
 ミュータブル -> アロケーションは内部
 イミュータブル -> アロケーションは外部
 ```
+
+　実際に計算は以下のような功罪を設計概念に持つようになる．
+
+```
+// 加算のオブジェクト設計．Float128型同士の計算を想定する．
+
+// NG
+static VALUE
+float128_add_coerce_f128(VALUE self, VALUE other)
+{
+	struct F128 *a = rb_check_typeddata(self, &float128_data_type);
+	struct F128 *b = rb_check_typeddata(other, &float128_data_type);
+
+	a->value += b->value; // NG．左辺オペランドのオブジェクトを更新している
+	return self;
+}
+
+// OK
+static VALUE
+float128_add(VALUE self, VALUE other)
+{
+	struct F128 *a = rb_check_typeddata(self, &float128_data_type);
+	struct F128 *b = rb_check_typeddata(other, &float128_data_type);
+
+	return rb_float128_cf128(a->value + b->value); // OK．C=A+Bの形．
+}
+
+```
+
