@@ -140,3 +140,11 @@ complex128_real_p(VALUE self)
 // 定義
 rb_define_method(rb_cComplex128, "real?", complex128_real_p, 0);
 ```
+
+　この仮定は実数を目安にしているだけに，#to_fメソッドが定義されただけでずいぶんと振る舞いが充実してくる．例えば単項マイナスは定義されていない場合#to_fメソッドをメソッド呼び出しするので，以下のように振る舞う．よく評価して都度に再定義するべきである．  
+
+```
+-Float128::INFINITY #=> -Infinity
+-Float128::INFINITY.class #=> Float
+```
+
