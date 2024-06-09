@@ -141,10 +141,24 @@ complex128_real_p(VALUE self)
 rb_define_method(rb_cComplex128, "real?", complex128_real_p, 0);
 ```
 
-　この仮定は実数を目安にしているだけに，#to_fメソッドが定義されただけでずいぶんと振る舞いが充実してくる．例えば単項マイナスは定義されていない場合#to_fメソッドをメソッド呼び出しするので，以下のように振る舞う．よく評価して都度に再定義するべきである．  
+　この仮定は実数を目安にしているだけに，#to_fメソッドが定義されただけでずいぶんと振る舞いが充実してくる．例えば単項マイナスは定義されていない場合#to_fメソッドをメソッド呼び出しするので，以下のように振る舞う．  
 
 ```
 -Float128::INFINITY #=> -Infinity
 -Float128::INFINITY.class #=> Float
 ```
 
+　Floatの実体はCのdouble型で二倍精度浮動小数点数、同じくIEEE754規格である。値は同じであっても精度が異なるので、このままではいけない。これも適切に再定義しなくてはいけない。  
+　筆者の実装例としては以下のようになった。  
+
+```
+static VALUE
+rb_float128_uminus(VALUE self)
+{
+	struct F128 *f128;
+	
+	TypedData_Get_Struct(self, struct F128, &float128_data_type, f128);
+	
+	return rb_float128_cf128(-f128->value);
+}
+```
