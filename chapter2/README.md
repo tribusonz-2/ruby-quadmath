@@ -214,3 +214,19 @@ rb_define_const(rb_mQuadMath, "SQRT1_2", rb_float128_cf128(M_SQRT1_2q));
 ```
 
 　虚数定数Iは表示で「比較メソッドが定義されていない」とエラーを起こす．どうやら内部では比較メソッドを使い，ゼロかどうかを判断しているのだろう．  
+
+　以下にテストビルドを示す．libディレクトリにある"extconf.rb"を実行し，Makefileを生成する．ついでmake installとタイプするとRubyの拡張ライブラリとして取り込まれる．ただ，今はテスト駆動開発をしている段階なので取り込まずとも良い．
+
+```
+$ ruby extconf.rb
+$ make
+```
+
+　端末のカレントディレクトリはそのままで"irb"を実行，require_relativeでRequireする．
+
+```
+$ irb
+$ require_relative 'quadmath' #=> true
+```
+
+　これで拡張ライブラリがextendされる．
