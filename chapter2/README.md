@@ -166,3 +166,51 @@ rb_float128_uminus(VALUE self)
 　内部的にはC API関数を使ってRuby構造体から直に値を取り出している．  
 　このままでは露骨なので，CからRubyの変数に変換するAPI関数rb_float128_cf128()のように，RubyからCの変数に変換するAPI関数も用意するべきと考えるのは当然だろう．しかしそうなると型チェックしなくてはいけないためオーバーヘッドが増してしまう．型チェックの必要性は，引数が確実にFloat128型だと分からないような状況に寄り切りであり，実体を定義するファイル内では不要なのである．  
 　このような話題では，ファイルスコープも関係してくる．参照できる範囲の内外のことを，プログラミングでは「スコープ」という．あるファイルでは実体が記述されていて，ファイル内ではどこからでも参照できる．しかし，そのファイルより違うファイルからは参照できない．こうした制約に基づいて，実体が参照できないがデータ運搬を求めるのにAPI関数を定義し用意するのが開発では定石と化している．  
+
+　では、自身に変換するためのメソッドを広域に用意するべきでもあろう。そのための手続きとしてグローバル関数の定義が用意されている。Float128では以下を定義する．  
+
+
+```
+	rb_define_global_function("Float128", f_Float128, -1);
+```
+
+　しかしながら、他のプリミティブ型からの型変換を受け入れるようにしなければならず、これもパーサが必要になる。  
+
+　現時点の実装では定数の定義ができる。実装例としては以下のように定義した。  
+
+```
+// Float128型
+rb_define_const(rb_cFloat128, "NAN", rb_float128_cf128(nanq(NULL)));
+rb_define_const(rb_cFloat128, "INFINITY", rb_float128_cf128(HUGE_VALQ));
+
+rb_define_const(rb_cFloat128, "MAX", rb_float128_cf128(FLT128_MAX));
+rb_define_const(rb_cFloat128, "MIN", rb_float128_cf128(FLT128_MIN));
+rb_define_const(rb_cFloat128, "EPSILON", rb_float128_cf128(FLT128_EPSILON));
+rb_define_const(rb_cFloat128, "DENORM_MIN", rb_float128_cf128(FLT128_DENORM_MIN));
+rb_define_const(rb_cFloat128, "MANT_DIG", INT2NUM(FLT128_MANT_DIG));
+rb_define_const(rb_cFloat128, "MIN_EXP", INT2NUM(FLT128_MIN_EXP));
+rb_define_const(rb_cFloat128, "MAX_EXP", INT2NUM(FLT128_MAX_EXP));
+rb_define_const(rb_cFloat128, "DIG", INT2NUM(FLT128_DIG));
+rb_define_const(rb_cFloat128, "MIN_10_EXP", INT2NUM(FLT128_MIN_10_EXP));
+rb_define_const(rb_cFloat128, "MAX_10_EXP", INT2NUM(FLT128_MAX_10_EXP));
+
+// Complex128型
+rb_define_const(rb_cComplex128, "I", complex128_cc128(0+1i));
+
+// 数学定数
+rb_define_const(rb_mQuadMath, "E", rb_float128_cf128(M_Eq));
+rb_define_const(rb_mQuadMath, "LOG2E", rb_float128_cf128(M_LOG2Eq));
+rb_define_const(rb_mQuadMath, "LOG10E", rb_float128_cf128(M_LOG10Eq));
+rb_define_const(rb_mQuadMath, "LN2", rb_float128_cf128(M_LN2q));
+rb_define_const(rb_mQuadMath, "LN10", rb_float128_cf128(M_LN10q));
+rb_define_const(rb_mQuadMath, "PI", rb_float128_cf128(M_PIq));
+rb_define_const(rb_mQuadMath, "PI_2", rb_float128_cf128(M_PI_2q));
+rb_define_const(rb_mQuadMath, "PI_4", rb_float128_cf128(M_PI_4q));
+rb_define_const(rb_mQuadMath, "ONE_PI", rb_float128_cf128(M_1_PIq));
+rb_define_const(rb_mQuadMath, "TWO_PI", rb_float128_cf128(M_2_PIq));
+rb_define_const(rb_mQuadMath, "TWO_SQRTPI", rb_float128_cf128(M_2_SQRTPIq));
+rb_define_const(rb_mQuadMath, "SQRT2", rb_float128_cf128(M_SQRT2q));
+rb_define_const(rb_mQuadMath, "SQRT1_2", rb_float128_cf128(M_SQRT1_2q));
+```
+
+　虚数定数Iは表示で「比較メソッドが定義されていない」とエラーを起こす。どうやら内部では比較メソッドを使い、ゼロかどうかを判断しているのだろう。
