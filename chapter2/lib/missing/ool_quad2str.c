@@ -27,16 +27,16 @@ foo(__float128 x)
 /**
  * ool_quad2str()
  * オブジェクト指向言語仕様として，__float128型をC文字列に変換する．
- * @@x ... 変換元の__float128型．
- * @@format ... 変換する書式．
+ * @x ... 変換元の__float128型．
+ * @format ... 変換する書式．
  *              'a' 'A' .. 十六進表記． 例: 0x1p+0 #=> 1.0
  *              'b' 'B' .. 二進法の指数表記 (0~1) 例: 0.1e+1 #=> 1.0
  *              'e' 'E' .. 十進法の指数表記 (1~10) 例: 1.0e+0 #=> 1.0
  *              'f' 'F' .. 浮動小数点表記 例: 1.0 #=> 1.0
  *              'g' 'G' .. ジェネリック．FLT128_DIGに応じて値を見やすくする．
- * @@exp ... 値の指数値．二進法の場合は正では1加算，負では1減算される．
- * @@sign ... xの符号値．非数かゼロの場合0，正の実数では1，負の実数では-1．
- * @@buf ... 変換された文字列．静的クラスを与えた内部変数sへのポインタを渡す．
+ * @exp ... 値の指数値．二進法の場合は正では1加算，負では1減算される．
+ * @sign ... xの符号値．非数の場合0，正の実数では1，負の実数では-1．
+ * @buf ... 変換された文字列．静的クラスを与えた内部変数sへのポインタを渡す．
  * @@retval ... 結果を書式formatで返す．
  *              '0' .. 失敗．
  *              '1' .. 有限でない値であった場合に返す．無限大か非数のどちらかだが，signが-1は負の無限大，0は非数，1は正の無限大でスイッチできる．
@@ -92,7 +92,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 			expv = 0;
 			s[0] = 'I'; s[1] = 'n'; s[2] = 'f';
 			s[3] = 'i'; s[4] = 'n'; s[5] = 'i';
-			s[6] = 't'; s[7] = 'y'; s[8] = 0;
+			s[6] = 't'; s[7] = 'y'; s[8] = '\0';
 			*buf = s;
 			retval = '1';
 		}
@@ -123,7 +123,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 				}
 				if (s[i] == 'p' && !is_exp_part)
 				{
-					s[i] = 0;
+					s[i] = '\0';
 					is_exp_part = 1;
 				}
 			}
@@ -134,7 +134,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 		{
 			if (retval == 'g')  retval = 'f';
 			expv = 0;
-			s[0] = '0'; s[1] = '.'; s[2] = '0'; s[3] = 0;
+			s[0] = '0'; s[1] = '.'; s[2] = '0'; s[3] = '\0';
 			*buf = s;
 		}
 		else if (absx >= 10)
@@ -159,15 +159,15 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 					int index = FLT128_DIG;
 					switch (s[index+offset]) {
 					case '9':
-						s[index+offset] = 0;
+						s[index+offset] = '\0';
 						for (; (index+offset-1) >= offset; index--)
 						{
 							if (s[index+offset-1] == '9') 
 							{
-								s[index+offset-1] = 0;
+								s[index+offset-1] = '\0';
 								if ((index+offset-1) == offset)
 								{
-									s[index+offset-1] = 0; offset--; s[index+offset-1] = '1';
+									s[index+offset-1] = '\0'; offset--; s[index+offset-1] = '1';
 									expv++;
 									break;
 								}
@@ -180,7 +180,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 						}
 						break;
 					default:
-						s[offset+index] = 0;
+						s[offset+index] = '\0';
 						index--;
 						
 						if (s[offset+index] == '0')
@@ -188,7 +188,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 							for (; (index+offset-1) >= offset; index--)
 							{
 								if (s[index+offset-1] == '0')
-									s[index+offset-1] = 0;
+									s[index+offset-1] = '\0';
 								else
 									break;
 							}
@@ -231,7 +231,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 					pos = strlen(s+offset);
 					if (pos > FLT128_DIG+3)
 					{
-						s[offset+FLT128_DIG+3] = 0; pos = FLT128_DIG+3; 
+						s[offset+FLT128_DIG+3] = '\0'; pos = FLT128_DIG+3; 
 					}
 					switch (s[offset+pos-2]) {
 					case '9':
@@ -240,7 +240,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 						{
 							if (s[offset+pos-1] == '9') 
 							{
-								s[offset+pos-1] = 0;
+								s[offset+pos-1] = '\0';
 								if ((offset+pos-1) == offset)
 								{
 									s[offset+pos-1] = '1';
@@ -258,7 +258,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 						for (; pos != 0; pos--)
 						{
 							if (s[offset+pos-1] == '0')
-								s[offset+pos-1] = 0;
+								s[offset+pos-1] = '\0';
 							else
 								break;
 						}
@@ -287,7 +287,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 					for (volatile int i = strlen(s+offset); (intdigit + 2) < i; i--)
 					{
 						if   (s[i] != '0')  break;
-						else  s[i] = 0;
+						else  s[i] = '\0';
 					}
 				}
 				else
@@ -303,7 +303,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 					}
 					if (s[offset+fra_pos+fradigit] == '9')
 					{
-						s[offset+fra_pos+fradigit] = 0;
+						s[offset+fra_pos+fradigit] = '\0';
 						for (int i = 0; i < fradigit; i++)
 						{
 							char *ptr = (s + offset + fra_pos + fradigit - i - 1);
@@ -317,7 +317,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 						}
 						if (s[offset+fra_pos] == 0)
 						{
-							s[offset+fra_pos] = '0'; s[offset+fra_pos+1] = 0; 
+							s[offset+fra_pos] = '0'; s[offset+fra_pos+1] = '\0'; 
 							for (int i = 0; i < intdigit; i++)
 							{
 								char *ptr = (s + offset + intdigit - i - 1);
@@ -338,7 +338,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 					}
 					else
 					{
-						s[offset+fra_pos+fradigit] = 0;
+						s[offset+fra_pos+fradigit] = '\0';
 						if (s[offset+fra_pos+fradigit-1] == '0')
 						{
 							for (int i = 0; i < (fradigit - 1); i++)
@@ -347,7 +347,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 								if (*ptr == '0')  *ptr = 0;
 								else  break;
 							}
-							if (s[offset+fra_pos] == 0)  { s[offset+fra_pos] = '0'; s[offset+fra_pos+1] = 0; }
+							if (s[offset+fra_pos] == 0)  { s[offset+fra_pos] = '0'; s[offset+fra_pos+1] = '\0'; }
 						}
 					}
 				}
@@ -369,7 +369,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 
 			if (s[offset+denormal_first_digit] == 9)
 			{
-				s[offset+denormal_first_digit] = 0;
+				s[offset+denormal_first_digit] = '\0';
 				for (int i = 0; i < (denormal_first_digit - 1); i++)
 				{
 					char *ptr = (s + offset + denormal_first_digit - i - 1);
@@ -390,7 +390,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 			}
 			else
 			{
-				s[offset+denormal_first_digit] = 0;
+				s[offset+denormal_first_digit] = '\0';
 
 				if (s[offset+denormal_first_digit-1] == '0')
 				{
@@ -422,7 +422,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 				}
 				else
 				{
-					s[offset] = 0; offset++;
+					s[offset] = '\0'; offset++;
 					s[offset] = s[offset+1];
 					s[offset+1] = '.';
 					if (s[offset+2] == 0)  s[offset+2] = '0';
@@ -441,11 +441,11 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 			}
 			switch (retval) {
 			case 'b': /* radix == 2  */
-				s[0] = '0'; s[1] = '.'; s[2] = '1'; s[3] = 0;
+				s[0] = '0'; s[1] = '.'; s[2] = '1'; s[3] = '\0';
 				expv = 1; 
 				break;
 			case 'e': case 'f': /* radix == 10 */
-				s[0] = '1'; s[1] = '.'; s[2] = '0'; s[3] = 0;
+				s[0] = '1'; s[1] = '.'; s[2] = '0'; s[3] = '\0';
 				expv = 0;
 				break;
 			default:
@@ -468,7 +468,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 				len = quadmath_snprintf(s+offset, BUF_SIZE-offset, "%1.*Qf", FLT128_DIG, w);
 				if (s[offset] != '0')
 				{
-					s[offset+len-1] = 0;
+					s[offset+len-1] = '\0';
 					s[offset+1] = s[offset]; s[offset] = '.';
 					offset--;
 					s[offset] = '0';
@@ -479,7 +479,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 					for (int i = 0; i < (len - 2); i++)
 					{
 						if (s[offset+len-i-1] == '0')
-							s[offset+len-i-1] = 0;
+							s[offset+len-i-1] = '\0';
 						else
 							break;
 					}
@@ -497,7 +497,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 				len = quadmath_snprintf(s+offset, BUF_SIZE-offset, "%1.*Qf", FLT128_DIG, w);
 				if (s[offset] != '0')
 				{
-					s[offset+len-1] = 0;
+					s[offset+len-1] = '\0';
 					s[offset+1] = s[offset]; s[offset] = '.';
 					offset--;
 					s[offset] = '0';
@@ -508,7 +508,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 					for (int i = 0; i < (len - 2); i++)
 					{
 						if (s[offset+len-i-1] == '0')
-							s[offset+len-i-1] = 0;
+							s[offset+len-i-1] = '\0';
 						else
 							break;
 					}
@@ -517,7 +517,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 					break;
 				}
 				
-				s[offset] = 0; offset++; s[offset] = s[offset+1]; s[offset+1] = '.';
+				s[offset] = '\0'; offset++; s[offset] = s[offset+1]; s[offset+1] = '.';
 				if (s[offset+2] == 0)  s[offset+2] = '0';
 				
 				break;
@@ -528,13 +528,13 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 				expv = -expv;
 				if (s[offset+len-1] == '9')
 				{
-					s[offset+len-1] = 0;
+					s[offset+len-1] = '\0';
 					len--;
 					for (int i = 0; i <= FLT128_DIG; i++)
 					{
 						if (s[offset+len-i-1] == '9')
 						{
-							s[offset+len-i-1] = 0;
+							s[offset+len-i-1] = '\0';
 						}
 						else
 						{
@@ -545,7 +545,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 				}
 				else
 				{
-					s[offset+len-1] = 0;
+					s[offset+len-1] = '\0';
 					len--;
 					if (s[offset+len-1] == '0')
 					{
@@ -553,7 +553,7 @@ ool_quad2str(__float128 x, char format, int *exp, int *sign, char **buf)
 						{
 							if (s[offset+len-i-1] == '0')
 							{
-								s[offset+len-i-1] = 0;
+								s[offset+len-i-1] = '\0';
 							}
 							else
 							{
