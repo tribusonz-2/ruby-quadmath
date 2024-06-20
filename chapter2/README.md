@@ -237,4 +237,33 @@ $ irb
 $ require_relative 'quadmath' #=> true
 ```
 
-　これで拡張ライブラリがextendされる．
+　これで拡張ライブラリがextendされる．  
+
+　ちなみに，プロダクトがフレームワークの規模になると，アプリケーションとして“値打ち”がつく．そのためAPI関数を用意して開発環境を提供するようにもなる．  
+　quadmathのフロントエンドでは以下のようになった．RubyのAPIでは慣例的に関数名のプレフィックスとしてrb_がつく(Pythonではpy_)．ついでクラス変数はc，モジュール変数はm，例外クラスはeと各々頭文字がつき，実体名と続くようである．  
+
+```
+RUBY_EXT_EXTERN VALUE rb_cFloat128;
+RUBY_EXT_EXTERN VALUE rb_cComplex128;
+RUBY_EXT_EXTERN VALUE rb_mQuadMath;
+
+/*
+ * C API: rb_float128_cf128(x)
+ * 
+ * Cの__float128型をRubyのFloat128型オブジェクトへ変換する．
+ * 
+ * @x ... __float128型
+ * @@retval ... 変換されたRubyのFloat128型
+ */
+VALUE rb_float128_cf128(__float128);
+
+/*
+ * C API: rb_complex128_cc128(z)
+ * 
+ * Cの__complex128型をRubyのComplex128型オブジェクトへ変換する．
+ * 
+ * @z ... __complex128型
+ * @@retval ... 変換されたRubyのComplex128型
+ */
+VALUE rb_complex128_cc128(__complex128);
+```
