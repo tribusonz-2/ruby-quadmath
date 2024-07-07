@@ -424,7 +424,7 @@ float128_modf(VALUE self)
  *  call-seq:
  *    frexp -> [Float128, Integer]
  *  
- *  +self+をFloat::RADIXを基底とした指数と仮数に分解し，[仮数, 指数]のペア配列で返す．
+ *  +self+を2を基底とした指数と仮数に分解し，[仮数, 指数]のペア配列で返す．
  *  有限でない場合，どのような値が返るかは機種依存である．
  */
 static VALUE

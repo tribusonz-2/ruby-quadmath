@@ -1199,7 +1199,7 @@ quadmath_quadrant_realsolve(__float128 x, __float128 y)
 }
 
 static inline __complex128
-catan2q(__complex128 z, __complex128 w)
+catan2q(__complex128 w, __complex128 z)
 {
 	if (cimagq(z) == 0 && cimagq(w) == 0)
 	{
@@ -1217,7 +1217,7 @@ catan2q(__complex128 z, __complex128 w)
 static inline VALUE
 quadmath_quadrant_nucompsolve(__complex128 z, __complex128 w)
 {
-	return rb_complex128_cc128(catan2q(z, w));
+	return rb_complex128_cc128(catan2q(w, z));
 }
 
 static VALUE

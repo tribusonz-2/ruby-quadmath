@@ -777,7 +777,6 @@ float128_ope_nucomp(VALUE self, VALUE other, int ope)
 	}
 }
 
-// complex128は優位がfloat128より上．coerceさせるべき
 static VALUE
 float128_ope_complex128(VALUE self, VALUE other, int ope)
 {
@@ -798,8 +797,7 @@ float128_ope_complex128(VALUE self, VALUE other, int ope)
 		return rb_complex128_cc128(x / y);
 		break;
 	case OPE_MOD:
-		// undefined
-		return rb_complex128_cc128(0+0i);
+		return rb_complex128_cc128(cmodq(x, y));
 		break;
 	case OPE_POW:
 		return rb_complex128_cc128(cpowq(x, y));
@@ -1241,7 +1239,7 @@ float128_s_fmax(int argc, VALUE *argv, VALUE self)
  *  call-seq:
  *    Float128.ldexp(x, exp) -> Float128
  *  
- *  xに2のexp乗をかけた値を返す(Load Exponent)．Mathモジュールにも同盟関数があるが，返却値は四倍精度である．
+ *  xに2のexp乗をかけた値を返す(Load Exponent)．Mathモジュールにも同名関数があるが，返却値は四倍精度である．
  *  frexpで分解した指数と仮数をもとの数値に戻すのに使う．
  *  
  *    fra, exp = '2.2'.to_f128.frexp # => [0.55, 2]
@@ -1645,16 +1643,16 @@ complex128_ope_complex128(VALUE self, VALUE other, int ope)
 	case OPE_CMP:
 		__float128 z_real = crealq(z), z_imag = cimagq(z);
 		__float128 w_real = crealq(z), w_imag = cimagq(z);
-		if (isnanq(z_real) || isnanq(z_imag) || isnanq(w_real) || isnanq(w_imag) ||
-		    z_imag != 0 || w_imag != 0)
+		if (isnanq(crealq(z)) || isnanq(cimagq(z)) ||
+		    isnanq(crealq(w)) || isnanq(cimagq(w)))
 			return Qnil;
 		else
 		{
-			if (z_real < w_real)
+			if (z < w)
 				return INT2NUM(-1);
-			else if (z_real > w_real)
+			else if (z > w)
 				return INT2NUM( 1);
-			else /* (z_real == w_real) */
+			else /* (z == w) */
 				return INT2NUM( 0);
 		}
 		break;
@@ -1668,14 +1666,6 @@ complex128_ope_complex128(VALUE self, VALUE other, int ope)
 	}
 }
 
-static VALUE
-complex128_polarize(VALUE rho, VALUE theta)
-{
-	__float128 abs = get_real(rho),
-	           arg = get_real(theta);
-	__complex128 expi = cexpiq(arg);
-	return rb_complex128_cc128(abs * expi);
-}
 
 
 /*
@@ -1974,6 +1964,14 @@ complex128_coerce(int argc, VALUE *argv, VALUE self)
 	}
 }
 
+static VALUE
+complex128_polarize(VALUE rho, VALUE theta)
+{
+	__float128 abs = get_real(rho),
+	           arg = get_real(theta);
+	__complex128 expi = cexpiq(arg);
+	return rb_complex128_cc128(abs * expi);
+}
 
 /*
  *  call-seq:
