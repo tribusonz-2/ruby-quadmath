@@ -40,6 +40,12 @@
 
 #define BUF_SIZ  128
 
+__complex128
+cmodq(__complex128 z, __complex128 w)
+{
+	return 0+0i; // 未定義
+}
+
 static inline VALUE
 numeric_to_f128_inline(VALUE self, int exception)
 {
@@ -379,7 +385,7 @@ f_Float128(int argc, VALUE *argv, VALUE self)
  *  +self+の絶対値と偏角を配列にして返す．振る舞いはFloatと同じだが精度が異なる．
  *  
  *  1.0.polar             # => [1.0, 0]
- *  Float128('2.0').polar # => [1.0, 0]
+ *  Float128('2.0').polar # => [2.0, 0]
  *  -1.0.polar # => [1.0, 3.141592653589793]
  *  Float128('-1.0').polar # => [1.0, 3.1415926535897932384626433832795]
  *  
@@ -1263,7 +1269,7 @@ float128_s_ldexp(VALUE obj, VALUE x, VALUE exp)
  *  メソッド名はC/C++の策定のときのオリジナルだが，(もちろん)newの意味を持つnが付け加えられたaliasもある．
  *  内部的にはnがlong型パージョンなscalblnq()を使用する．
  *  
- *    # 3.0 * (Float::RADIX * 4)
+ *    # 3.0 * Float::RADIX ** 4
  *    Float128.scalb(3, 4) # => 48.0
  */
 static VALUE
@@ -1319,11 +1325,9 @@ static VALUE
 complex128_abs2(VALUE self)
 {
 	__complex128 c128 = GetC128(self);
-	__float128 real, imag;
+	__float128 abs_val = cabsq(c128);
 	
-	real = crealq(c128); imag = cimagq(c128);
-	
-	return rb_float128_cf128(real * real + imag * imag);
+	return rb_float128_cf128(abs_val * abs_val);
 }
 
 /*
@@ -1355,14 +1359,6 @@ complex128_conj(VALUE self)
 	
 	return rb_complex128_cc128(conjq(c128));
 }
-
-
-__complex128
-cmodq(__complex128 z, __complex128 w)
-{
-	return 0+0i; // 未定義
-}
-
 
 static VALUE
 complex128_ope_integer(VALUE self, VALUE other, int ope)
@@ -1643,16 +1639,17 @@ complex128_ope_complex128(VALUE self, VALUE other, int ope)
 	case OPE_CMP:
 		__float128 z_real = crealq(z), z_imag = cimagq(z);
 		__float128 w_real = crealq(z), w_imag = cimagq(z);
-		if (isnanq(crealq(z)) || isnanq(cimagq(z)) ||
-		    isnanq(crealq(w)) || isnanq(cimagq(w)))
+		if (isnanq(z_real) || isnanq(z_imag) ||
+		    isnanq(w_real) || isnanq(w_imag) ||
+		    z_imag != 0 || w_imag != 0)
 			return Qnil;
 		else
 		{
-			if (z < w)
+			if (z_real < w_real)
 				return INT2NUM(-1);
-			else if (z > w)
+			else if (z_real > w_real)
 				return INT2NUM( 1);
-			else /* (z == w) */
+			else /* (z_real == w_real) */
 				return INT2NUM( 0);
 		}
 		break;

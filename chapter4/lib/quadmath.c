@@ -1733,6 +1733,124 @@ quadmath_atanh(VALUE unused_obj, VALUE x)
 	}
 }
 
+static inline VALUE
+quadmath_hypot_realsolve(__float128 x, __float128 y)
+{
+	return rb_float128_cf128(hypotq(x, y));
+}
+
+static inline VALUE
+quadmath_hypot_nucompsolve(__complex128 z, __complex128 w)
+{
+	__float128 absz = cabsq(z), absw = cabsq(w);
+	return rb_float128_cf128(csqrtq(absz * absz + absw * absw));
+}
+
+static VALUE
+hypot_inline(VALUE xsh, VALUE ysh)
+{
+	static __float128 x, y;
+	static __complex128 z, w;
+	bool x_nucomp_p = false, y_nucomp_p = false;
+	
+	switch (convertion_num_types(xsh)) {
+	case NUM_FIXNUM:
+		x = fixnum_to_cf128(xsh);
+		break;
+	case NUM_BIGNUM:
+		x = bignum_to_cf128(xsh);
+		break;
+	case NUM_RATIONAL:
+		x = rational_to_cf128(xsh);
+		break;
+	case NUM_FLOAT:
+		x = float_to_cf128(xsh);
+		break;
+	case NUM_COMPLEX:
+		z = nucomp_to_cc128(xsh);
+		x_nucomp_p = true;
+		break;
+	case NUM_FLOAT128:
+		x = GetF128(xsh);
+		break;
+	case NUM_COMPLEX128:
+		z = GetC128(xsh);
+		x_nucomp_p = true;
+		break;
+	case NUM_OTHERTYPE:
+	default:
+		if (num_real_p(xsh))
+			x = GetF128(xsh);
+		else
+		{
+			z = GetC128(xsh);
+			x_nucomp_p = true;
+		}
+		break;
+	}
+
+	switch (convertion_num_types(ysh)) {
+	case NUM_FIXNUM:
+		y = fixnum_to_cf128(ysh);
+		break;
+	case NUM_BIGNUM:
+		y = bignum_to_cf128(ysh);
+		break;
+	case NUM_RATIONAL:
+		y = rational_to_cf128(ysh);
+		break;
+	case NUM_FLOAT:
+		y = float_to_cf128(ysh);
+		break;
+	case NUM_COMPLEX:
+		w = nucomp_to_cc128(ysh);
+		y_nucomp_p = true;
+		break;
+	case NUM_FLOAT128:
+		y = GetF128(ysh);
+		break;
+	case NUM_COMPLEX128:
+		w = GetC128(ysh);
+		y_nucomp_p = true;
+		break;
+	case NUM_OTHERTYPE:
+	default:
+		if (num_real_p(ysh))
+			y = GetF128(ysh);
+		else
+		{
+			w = GetC128(ysh);
+			y_nucomp_p = true;
+		}
+		break;
+	}
+	
+	if (x_nucomp_p && y_nucomp_p)
+		return quadmath_hypot_nucompsolve(z, w);
+	else if (x_nucomp_p && !y_nucomp_p)
+		return quadmath_hypot_nucompsolve(z, y);
+	else if (!x_nucomp_p && y_nucomp_p)
+		return quadmath_hypot_nucompsolve(x, w);
+	else
+		return quadmath_hypot_realsolve(x, y);
+}
+
+/*
+ *  call-seq:
+ *    QuadMath.hypot(x, y) -> Float128
+ *  
+ *  xとyの直角三角形の斜辺の長さを実数で返す．
+ *  2変数に複素数が含まれているなら複素数解を返す．答は常に実数である．
+ *  
+ *    QuadMath.hypot(3, 4) # => 5.0
+ *    QuadMath.hypot(1+1i, 2+1i) # => 2.6457513110645905905016157536392
+ */
+static VALUE
+quadmath_hypot(VALUE unused_obj, VALUE x, VALUE y)
+{
+	return hypot_inline(x, y);
+}
+
 
 #ifndef HAVE_CERFCQ
 extern __complex128 cerfcq(__complex128);
@@ -1924,6 +2042,7 @@ quadmath_lgamma_nucompsolve(__complex128 z)
  *    QuadMath.lgamma(x) -> Float128 | Complex128
  *  
  *  xの対数ガンマ関数を返す．
+ *  xが実数で正なら実数解，負なら複素数解，複素数なら複素数解を返す．
  *  
  */
 static VALUE
@@ -2145,6 +2264,7 @@ InitVM_QuadMath(void)
 	rb_define_module_function(rb_mQuadMath, "asinh", quadmath_asinh, 1);
 	rb_define_module_function(rb_mQuadMath, "acosh", quadmath_acosh, 1);
 	rb_define_module_function(rb_mQuadMath, "atanh", quadmath_atanh, 1);
+	rb_define_module_function(rb_mQuadMath, "hypot", quadmath_hypot, 2);
 	rb_define_module_function(rb_mQuadMath, "erf", quadmath_erf, 1);
 	rb_define_module_function(rb_mQuadMath, "erfc", quadmath_erfc, 1);
 	rb_define_module_function(rb_mQuadMath, "lgamma", quadmath_lgamma, 1);

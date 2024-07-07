@@ -426,6 +426,8 @@ float128_modf(VALUE self)
  *  
  *  +self+を2を基底とした指数と仮数に分解し，[仮数, 指数]のペア配列で返す．
  *  有限でない場合，どのような値が返るかは機種依存である．
+ *  
+ *    8.to_f128.frexp # => [0.5, 4]
  */
 static VALUE
 float128_frexp(VALUE self)
@@ -444,7 +446,7 @@ float128_frexp(VALUE self)
  *    scalbn(n) -> Float128
  *  
  *  +self+にFloat::RADIXのn乗をかけた値にする．
- *  特異メソッドにも同等のメソッドがあるが，こちらはレシーバをオペランド代わりにしたものである．
+ *  特異メソッドにも同等のメソッドがあるが，こちらはレシーバをオペランドの代わりにしたものである．
  *  
  *    Float::RADIX # => 2
  *    x = 3.to_f128
