@@ -2429,4 +2429,5 @@ InitVM_Numerable(void)
 	rb_define_method(rb_cComplex128, "coerce", complex128_coerce, -1);
 	
 	rb_undef_method(rb_cComplex128, "%");
+	rb_undef_method(rb_cComplex128, "modulo");
 }
