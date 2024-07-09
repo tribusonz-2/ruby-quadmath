@@ -193,7 +193,7 @@ quadmath_exp2_nucompsolve(__complex128 z)
 
 /*
  *  call-seq:
- *    QuadMath.exp2(x) -> Integer | Float128 | Complex | Complex128
+ *    QuadMath.exp2(x) -> Integer | Rational | Float128 | Complex | Complex128
  *  
  *  2のx乗を返す．xが整数なら正では整数解，負では有理数解，実数なら実数解，複素数なら複素数解として各々返却する．
  *  これは一般に`2 ** x`と計算するのとさして変わらない．唯一の違いは実数の精度が二倍ではなく四倍であることである．
@@ -202,9 +202,6 @@ quadmath_exp2_nucompsolve(__complex128 z)
  *  QuadMath.exp2(5) # => 32
  *  QuadMath.exp2(11/7r) # => 2.9719885782738968495997065734291
  *  QuadMath.exp2(Complex128::I) # => (0.76923890136397212657832999366127+0.638961276313634801150032911464701i)
- *  QuadMath.exp2(Complex::I) # => (0.76923890136397212657832999366127+0.638961276313634801150032911464701i)
- *  [QuadMath.exp2(Complex::I), QuadMath.exp2(Complex128::I)].map(&:class)
- *  # => [Complex, Complex128]
  */
 static VALUE
 quadmath_exp2(VALUE unused_obj, VALUE x)
@@ -403,7 +400,7 @@ quadmath_log2_nucompsolve(__complex128 z)
  *  call-seq:
  *    QuadMath.log2(x) -> Float128 | Complex128
  *  
- *  2を底とする対数のxを返す．(Binary Logarithm)
+ *  xの2を底とする対数を返す．(Binary Logarithm)
  *  xが実数なら正ならば実数解，負なら複素数解，複素数なら複素数解として値を各々返す．
  *  
  *    ary = 1.step(5).to_a # => [1, 2, 3, 4, 5]
@@ -485,7 +482,7 @@ quadmath_log10_nucompsolve(__complex128 z)
  *    ary = Array.new(5){|i| 10**i} # => [1, 10, 100, 1000, 10000]
  *    ary.map {|x| QuadMath.log10(x)} # => [0.0, 1.0, 2.0, 3.0, 4.0]
  *    
- *    1.step(-5, -1).to_a # => [-1, -2, -3, -4, -5]
+ *    -1.step(-5, -1).to_a # => [-1, -2, -3, -4, -5]
  *    ary = -1.step(-5, -1).map{|i| 10**i} # => [(1/10), (1/100), (1/1000), (1/10000), (1/100000)]
  *    ary.map{|x| QuadMath.log10(x)} # => [-1.0, -2.0, -3.0, -4.0, -5.0]
  *    
@@ -1840,7 +1837,7 @@ hypot_inline(VALUE xsh, VALUE ysh)
  *    QuadMath.hypot(x, y) -> Float128
  *  
  *  xとyの直角三角形の斜辺の長さを実数で返す．
- *  2変数に複素数が含まれているなら複素数解を返す．答は常に実数である．
+ *  2変数に複素数が含まれているなら複素数解を返す．答は常に正の実数である．
  *  
  *    QuadMath.hypot(3, 4) # => 5.0
  *    QuadMath.hypot(1+1i, 2+1i) # => 2.6457513110645905905016157536392
@@ -2044,6 +2041,7 @@ quadmath_lgamma_nucompsolve(__complex128 z)
  *  xの対数ガンマ関数を返す．
  *  xが実数で正なら実数解，負なら複素数解，複素数なら複素数解を返す．
  *  
+ *    
  */
 static VALUE
 quadmath_lgamma(VALUE unused_obj, VALUE x)
@@ -2198,6 +2196,7 @@ quadmath_gamma_nucompsolve(__complex128 z)
  *  xのガンマ関数を返す．
  *  xが実数なら実数解，素数なら複素数解として各々返却する．
  *  
+ *    
  */
 static VALUE
 quadmath_gamma(VALUE unused_obj, VALUE x)
