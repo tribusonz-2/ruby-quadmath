@@ -95,27 +95,11 @@ complex128_eql_p(VALUE self, VALUE other)
 	return left_c128 == right_c128 ? Qtrue : Qfalse;
 }
 
-#if 0
-/*
- *  call-seq:
- *    -self -> Complex128
- *  
- *  単項マイナス．+self+をマイナスにして返す．
- */
-static VALUE
-complex128_uminus(VALUE self)
-{
-	__complex128 c128 = GetC128(self);
-	
-	return rb_complex128_cc128(-c128);
-}
-#endif
-
 /*
  *  call-seq:
  *    infinite? -> nil | 1
  *  
- *  +self+が無限複素量であるかどうかを審議する．実部・虚部がともに有限であればnilを，そうでなければ1を返す．
+ *  +self+が無限複素量であるかを確認する．実部・虚部がともに有限であればnilを，そうでなければ1を返す．
  
  */
 static VALUE
@@ -473,11 +457,6 @@ InitVM_Complex128(void)
 	rb_undef_method(rb_cComplex128, "i");
 	rb_define_method(rb_cComplex128, "infinite?", complex128_infinite_p, 0);
 	rb_define_method(rb_cComplex128, "finite?", complex128_finite_p, 0);
-	
-	/* Operators & Evals */
-#if 0
-	rb_define_method(rb_cComplex128, "-@", complex128_uminus, 0);
-#endif
 	
 	/* Type convertion methods */
 	rb_define_method(rb_cComplex128, "to_s", complex128_to_s, 0);

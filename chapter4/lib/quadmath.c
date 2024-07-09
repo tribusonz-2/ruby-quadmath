@@ -2195,8 +2195,8 @@ quadmath_gamma_nucompsolve(__complex128 z)
  *  call-seq:
  *    QuadMath.gamma(x) -> Float128 | Complex128
  *  
- *  xの対数ガンマ関数を返す．
- *  xが実数なら正では実数解，負では複素数解，複素数なら複素数解として各々返却する．
+ *  xのガンマ関数を返す．
+ *  xが実数なら実数解，素数なら複素数解として各々返却する．
  *  
  */
 static VALUE

@@ -96,22 +96,6 @@ float128_eql_p(VALUE self, VALUE other)
 	return left_f128 == right_f128 ? Qtrue : Qfalse;
 }
 
-#if 0
-/*
- *  call-seq:
- *    -self -> Float128
- *  
- *  単項マイナス．+self+をマイナスにして返す．
- */
-static VALUE
-float128_uminus(VALUE self)
-{
-	struct F128 *f128 = F128_Get_Struct(self);
-	
-	return rb_float128_cf128(-f128->value);
-}
-#endif
-
 /*
  *  call-seq:
  *    finite? -> bool
@@ -476,11 +460,6 @@ InitVM_Float128(void)
 	rb_define_method(rb_cFloat128, "infinite?", float128_infinite_p, 0);
 	rb_define_method(rb_cFloat128, "finite?", float128_finite_p, 0);
 	rb_define_method(rb_cFloat128, "nan?", float128_nan_p, 0);
-	
-	/* Operators & Evals */
-#if 0
-	rb_define_method(rb_cFloat128, "-@", float128_uminus, 0);
-#endif
 	
 	/* Type convertion methods */
 	rb_define_method(rb_cFloat128, "inspect", float128_inspect, 0);
