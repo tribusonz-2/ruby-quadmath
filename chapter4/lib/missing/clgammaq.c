@@ -53,6 +53,7 @@ clgammaq(__complex128 x)
 	
 	if (crealq(x) < 0)  y = clogq(pi/csinq(pi*x))-y;
 	
+	// FIXME: 虚部に$2\pi$分が加減算されない。FORTRANの近接丸め関数はCの近接丸め関数とは異なる
 	r = 0.5L-(1i * y)/(2*pi);
 	s = floorq(r)-1.q;
 	
