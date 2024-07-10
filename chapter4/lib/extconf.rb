@@ -4,8 +4,10 @@ if have_header('quadmath.h')
   have_func('rb_opts_exception_p', 'ruby.h')
   have_func('cerfq', 'quadmath.h')
   have_func('cerfcq', 'quadmath.h')
-  have_func('clgamma', 'quadmath.h')
-  have_func('ctgamma', 'quadmath.h')
+  have_func('clgammaq', 'quadmath.h')
+  have_func('ctgammaq', 'quadmath.h')
+  have_func('cl2normq', 'quadmath.h')
+
   $libs << " -lquadmath"
   create_makefile('quadmath')
 else

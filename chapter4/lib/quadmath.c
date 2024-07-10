@@ -1730,6 +1730,13 @@ quadmath_atanh(VALUE unused_obj, VALUE x)
 	}
 }
 
+#ifndef HAVE_CL2NORMQ
+__float128 cl2normq(__complex128, __complex128);
+
+# include "missing/cl2normq.c"
+
+#endif
+
 static inline VALUE
 quadmath_hypot_realsolve(__float128 x, __float128 y)
 {
@@ -1739,8 +1746,7 @@ quadmath_hypot_realsolve(__float128 x, __float128 y)
 static inline VALUE
 quadmath_hypot_nucompsolve(__complex128 z, __complex128 w)
 {
-	__float128 absz = cabsq(z), absw = cabsq(w);
-	return rb_float128_cf128(csqrtq(absz * absz + absw * absw));
+	return rb_float128_cf128(cl2normq(z, w));
 }
 
 static VALUE
@@ -1837,10 +1843,22 @@ hypot_inline(VALUE xsh, VALUE ysh)
  *    QuadMath.hypot(x, y) -> Float128
  *  
  *  xとyの直角三角形の斜辺の長さを実数で返す．
- *  2変数に複素数が含まれているなら複素数解を返す．答は常に正の実数である．
+ *  2変数に複素数が含まれているならL2ノルムの答を返す．答は実数解・複素数解ともに常に正の実数である．
  *  
  *    QuadMath.hypot(3, 4) # => 5.0
- *    QuadMath.hypot(1+1i, 2+1i) # => 2.6457513110645905905016157536392
+ *    
+ *    z = w = 2+1i;
+ *    5.times do
+ *      ans = QuadMath.hypot(z, w)
+ *      print "hypot(%s, %s)^2 = %s^2 " % [z, w, ans]
+ *      puts "= %s" % [ans ** 2]
+ *      z += 1; w += 1;
+ *    end
+ *    # => hypot(2+1i, 2+1i)^2 = 3.1622776601683793319988935444327^2 = 10.0
+ *    # => hypot(3+1i, 3+1i)^2 = 4.4721359549995793928183473374625^2 = 20.0
+ *    # => hypot(4+1i, 4+1i)^2 = 5.8309518948453004708741528775455^2 = 34.0
+ *    # => hypot(5+1i, 5+1i)^2 = 7.2111025509279785862384425349409^2 = 52.0
+ *    # => hypot(6+1i, 6+1i)^2 = 8.6023252670426267717294735350497^2 = 74.0
  */
 static VALUE
 quadmath_hypot(VALUE unused_obj, VALUE x, VALUE y)
