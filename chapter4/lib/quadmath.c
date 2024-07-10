@@ -1676,23 +1676,23 @@ quadmath_atanh_nucompsolve(__complex128 x)
  *  xの双曲線逆正接を返す．
  *  xが実数なら定義域(-1<=x<=1)は実数解，それ以外は複素数解，複素数なら複素数解として各々返却する．
  *  
- *  puts "%s %s" % [" (x)", " tanh^-1(x)"]
- *  -15.step(15, 5){|x|
- *    x/=10.0; 
- *    y = QuadMath.atanh(x)
- *    y_str = y.to_s
- *    if !y.real.negative? then y_str = " #{y.to_s}"; end
- *    puts "%s %s" % [quadmath_sprintf("% 1.1Qf", x), y_str]
- *  }
- *  # =>  (x)  tanh^-1(x)
- *  # => -1.5 -0.804718956217050187300379666613093+1.5707963267948966192313216916397i
- *  # => -1.0 -Infinity
- *  # => -0.5 -0.549306144334054845697622618461263
- *  # =>  0.0  0.0
- *  # =>  0.5  0.549306144334054845697622618461263
- *  # =>  1.0  Infinity
- *  # =>  1.5  0.804718956217050187300379666613093+1.5707963267948966192313216916397i
- *  QuadMath.atanh(1+1i) # => (0.402359478108525093650189833306547+1.0172219678978513677227889615504i)
+ *    puts "%s %s" % [" (x)", " tanh^-1(x)"]
+ *    -15.step(15, 5){|x|
+ *      x/=10.0; 
+ *      y = QuadMath.atanh(x)
+ *      y_str = y.to_s
+ *      if !y.real.negative? then y_str = " #{y.to_s}"; end
+ *      puts "%s %s" % [quadmath_sprintf("% 1.1Qf", x), y_str]
+ *    }
+ *    # =>  (x)  tanh^-1(x)
+ *    # => -1.5 -0.804718956217050187300379666613093+1.5707963267948966192313216916397i
+ *    # => -1.0 -Infinity
+ *    # => -0.5 -0.549306144334054845697622618461263
+ *    # =>  0.0  0.0
+ *    # =>  0.5  0.549306144334054845697622618461263
+ *    # =>  1.0  Infinity
+ *    # =>  1.5  0.804718956217050187300379666613093+1.5707963267948966192313216916397i
+ *    QuadMath.atanh(1+1i) # => (0.402359478108525093650189833306547+1.0172219678978513677227889615504i)
  */
 static VALUE
 quadmath_atanh(VALUE unused_obj, VALUE x)
@@ -2030,8 +2030,7 @@ quadmath_lgamma_nucompsolve(__complex128 z)
 			return rb_complex128_cc128(lgamma_negarg(real));
 	}
 	else
-//		return rb_complex128_cc128(clgammaq(z));
-		return Qnil;
+		return rb_complex128_cc128(clgammaq(z));
 }
 
 /*
