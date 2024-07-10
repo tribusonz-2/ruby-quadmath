@@ -1730,10 +1730,10 @@ quadmath_atanh(VALUE unused_obj, VALUE x)
 	}
 }
 
-#ifndef HAVE_CL2NORMQ
-__float128 cl2normq(__complex128, __complex128);
+#ifndef HAVE_CL2NORM2Q
+__float128 cl2norm2q(__complex128, __complex128);
 
-# include "missing/cl2normq.c"
+# include "missing/cl2norm2q.c"
 
 #endif
 
@@ -1746,7 +1746,7 @@ quadmath_hypot_realsolve(__float128 x, __float128 y)
 static inline VALUE
 quadmath_hypot_nucompsolve(__complex128 z, __complex128 w)
 {
-	return rb_float128_cf128(cl2normq(z, w));
+	return rb_float128_cf128(cl2norm2q(z, w));
 }
 
 static VALUE
