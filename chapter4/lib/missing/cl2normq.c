@@ -26,7 +26,7 @@ cl2normq(__complex128 z, __complex128 w)
 	           w_real = crealq(w), w_imag = cimagq(w);
 	
 	if (z_imag == 0 && w_imag == 0)
-		return hypotq(z_real, z_real);
+		return hypotq(z_real, w_real);
 	else if (finiteq(z_real) && finiteq(z_imag) &&
 	         finiteq(w_real) && finiteq(w_imag))
 	{
