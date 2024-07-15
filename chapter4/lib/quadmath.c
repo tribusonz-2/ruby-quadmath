@@ -966,7 +966,7 @@ quadmath_tan_nucompsolve(__complex128 z)
  *  xの正接を返す．
  *  xが実数なら実数解，複素数なら複素数解として各々返却する．
  *  この関数はxは周期性$2\pi$として虚数の現れていない数なら極と解釈し，特殊値を返す．
- *  特殊値の送出は$-2\pi \le x \le 2\pi$の範囲内では正確に戻すよう試みるが，範囲外で正確かどうかは機種依存である．
+ *  特殊値の送出は$-2\pi \le x \le 2\pi$の範囲内では正確な答を期待できる．しかし，範囲外で正確かどうかは機種依存である．
  *  
  *    QuadMath.tan(QuadMath.atan(Float128::INFINITY)) # => Infinity
  *    QuadMath.tan(3/4r * QuadMath::PI) # => -1.0
