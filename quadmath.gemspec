@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = ">= 3.1.0"
   spec.extensions    = %w[ext/quadmath/extconf.rb]
 
-  spec.metadata["allowed_push_host"] = "https://github.com/tribusonz-2/ruby-quadmath"
+  spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/tribusonz-2/ruby-quadmath"
