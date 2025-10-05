@@ -21,47 +21,143 @@ gem install quadmath
 
 ## Usage
 
+Require it below.  
+
+```Ruby
+require 'quadmath'
+```
+
 Along with the QuadMath module, you can use the Float128 class, which is an object of type __float128, and Complex128, which is an object of type __complex128.  
 Objects are designed as Ruby primitives.  
+It implements arithmetic operations and allows numerical calculations on primitive types.  
 
-```
+```Ruby
 Float128('5') + Float128('6') # => 11.0
 Complex128('1+1i') + Complex128('2+2i') # => (3.0+3.0i)
 ```
 
 It also implements arithmetic with Ruby's primitive types.  
 
-```
+```Ruby
 Float128('5') + 1 # => 6.0
 Complex128('2+1i') * 2 # => (4.0+2.0i)
 ```
 
+Numeric types are implemented to be mutually convertible according to Ruby specifications (e.g., `#to_r` for Rational classes). There are also `#to_f128` and `#to_c128` functions that convert Ruby's numeric primitive types to quadruple precision. These correspond to the Float128 and Complex128 types, respectively.  
+
+```Ruby
+1.to_f128 # => 1.0
+1.to_c128 #=> (1.0+0.0i)
+```
+
+Rational also implements a conversion between them, which is useful because it handles them internally as quadruple precision and does not incur the loss of trailing digits that occurs with double precision.  
+
+```Ruby
+(1/3r).to_f128 # => 0.3333333333333333333333333333333333
+```
+
+Conversion from double precision to quad precision is also supported, although (as expected) there is a loss of trailing digits.  
+
+```Ruby
+(1/3r).to_f.to_f128 #=> 0.333333333333333314829616256247391
+```
+
 When calculating Complex types and Complex128 types, please note that the returned value will be a Complex type with Float128 type as a member.  
 
-```
+```Ruby
 c = Complex128('1+2i') + Complex('2+2i') #=> (3.0+4.0i)
 c.class # => Complex
 ```
 
 However, Complex128 type cannot be compared.  
 
-```
+```Ruby
 Complex128::I == Complex::I # => false
 ```
 
 The QuadMath module is a combination of the Float128 and Complex128 types.  
 The library function to be used varies depending on the argument type. For example, if the argument to #sqrt is Float128, sqrtq() is used, and if it is Complex128, csqrtq() is used.  
 
-```
+```Ruby
 QuadMath.sqrt(Float128('1')) # => 1.0
 QuadMath.sqrt(Complex128('1')) # => (1.0+0.0i)
 ```
 
 If the function has branch cuts, it will be interpreted as a complex solution outside the real number domain.  
 
-```
+```Ruby
 QuadMath.sqrt(-1) # => (0.0+1.0i)
 ```
+
+### Specification
+
+Library functions are wrapped to match the Ruby implementation. For example, `#inspect` converts strings using the function `ool_quad2str()`, which uses `quadmath_snprintf()`.  
+
+```Ruby
+QuadMath.sqrt(2) # => 1.4142135623730950488016887242096981
+```
+
+However, there are problems with accuracy. Can anyone tell me how to improve this?  
+
+```Ruby
+Float128('8') # => 8.0000000000000000000000000000000004
+```
+
+`#to_s` is also this implementation. It is based on Ruby notation.  
+
+The `quadmath_snprintf()` function itself has a front end called `#quadmath_sprintf`. Note, however, that the method name is slightly different.  
+
+```Ruby
+quadmath_sprintf("%Qf", 2) # => "2.000000"
+quadmath_sprintf("%Qf", 7/10r) # => "0.700000"
+quadmath_sprintf("%.*Qf", Float128::DIG, 1/3r) # => "0.333333333333333333333333333333333"
+quadmath_sprintf("%.*Qf", Float128::DIG, 1.0/3.0) # => "0.333333333333333314829616256247391"
+quadmath_sprintf("%.*Qf", Float128::DIG, 1.to_f128 / 3) # => "0.333333333333333333333333333333333"
+width = 46; prec = 20;
+quadmath_sprintf("%+-#*.*Qe", width, prec, QuadMath.sqrt(2)) # => "+1.41421356237309504880e+00                   "
+```
+
+To create instances of primitive types, `Float128()` is used for Float128 types and `Complex128()` is used for Complex types, with the implementation wrapping `strtoflt128()` respectively.  
+
+```Ruby
+Float128('1.0') # => 1.0
+Float128('0x2.0p+3') # => 16.0 # Hexadecimal support
+Complex128('1+1i') # => (1.0+1.0i)
+Complex128('2e1+3e1i') # => (20.0+30.0i)
+```
+
+A front end is also available for strtoflt128() alone.  
+The second argument is treated as an option `sp`.  
+
+```Ruby
+strtoflt128('inf') # => Infinity
+strtoflt128('-1') # => -1.0
+strtoflt128('0xdeadbeef') # => 3735928559.0
+sp = '' # => ""
+strtoflt128('0+1i', sp: sp) # => 0.0
+sp # => "+1i"
+```
+
+`#floor` `#ceil` `#round` `#truncate` are each library functions converted to Float128 type methods.  
+
+```Ruby
+Float128('8.5').floor # => 8
+Float128('8.5').ceil # => 9
+Float128('8.5').round # => 9
+Float128('8.5').truncate # => 8
+```
+
+`nextafterq()` is used to implement `#next_float` and `#prev_float`.  
+
+```Ruby
+f128 = Float128(1.0) # => 1.0
+f128.next_float # => 1.0000000000000000000000000000000002
+f128.prev_float # => 0.9999999999999999999999999999999999
+```
+
+For other implementations, see `ext/quadmath` in the source code.  
+
+### Lists
 
 List of wrapped constants in the Float128 class  
 
